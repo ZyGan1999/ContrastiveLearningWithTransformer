@@ -158,7 +158,7 @@ def get_CIFAR100_test_sample_tensor():
     training_data_tensors = torch.stack(Xs)
     training_label_tensors = torch.tensor(Ys)
 
-    index = torch.LongTensor(random.sample(range(HP.train_set_size), HP.sample_num))
+    index = torch.LongTensor(random.sample(range(10000), HP.sample_num))
     training_data_tensors = torch.index_select(training_data_tensors, dim=0, index=index)
     training_label_tensors = torch.index_select(training_label_tensors, dim=0, index=index)
 
