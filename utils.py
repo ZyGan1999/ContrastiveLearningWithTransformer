@@ -31,7 +31,7 @@ def get_train_set_size(data_set):
     elif data_set == 'MNIST_arc':
         rtn = 60000
     elif data_set == 'MNIST_orientation':
-        rtn = 60000#?
+        rtn = 60000
     elif data_set == 'VOC':
         rtn = 1905
 
@@ -146,6 +146,7 @@ def draw(X,Y,msg):
     Y = Y.detach().numpy()
 
     tsne = TSNE(n_components=2, learning_rate=200).fit_transform(X)
-    plt.figure(figsize=(12, 6))
+    plt.figure(figsize=(12, 12))
     plt.scatter(tsne[:, 0], tsne[:, 1], c=Y)
     plt.savefig('tsneimg/'+msg+'.png', dpi=120)
+    plt.close()

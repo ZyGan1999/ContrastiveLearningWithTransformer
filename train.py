@@ -22,6 +22,7 @@ from utils import calc_accuracy
 from utils import writer
 from utils import freeze_by_names
 from utils import draw
+from utils import tag_name
 
 from model.contrastive import ContrastiveLoss
 
@@ -35,7 +36,7 @@ from model.contrastive import ContrastiveLoss
 #print(idx_to_label)
 
 
-tag_name = '[dataset]='+HP.data_set+' - '+'[batch_size]='+str(HP.batch_size)+' - '+'[dim_k]='+str(HP.dim_k)+' - '+'[dim_v]='+str(HP.dim_v)+' - '+'[n_heads]='+str(HP.n_heads)+' - '+'[lr]='+str(HP.learning_rate)
+#tag_name = '[dataset]='+HP.data_set+' - '+'[batch_size]='+str(HP.batch_size)+' - '+'[dim_k]='+str(HP.dim_k)+' - '+'[dim_v]='+str(HP.dim_v)+' - '+'[n_heads]='+str(HP.n_heads)+' - '+'[lr]='+str(HP.learning_rate)
 
 # writer = SummaryWriter(comment = '[resnet_with_attention_in_one_batch]'+tag_name)
 # writer = SummaryWriter(comment = '[resnet+attention]'+tag_name)
@@ -407,5 +408,7 @@ def train(net, trainloader, testloader, is_con):
     with torch.no_grad():
         representation,_ = best_model(data_tensor.cuda())
         draw(X=representation.cpu(),Y=label_tensor,msg='Best-Training')
+
+    torch.save({'model': best_model.state_dict()}, tag_name+'.pth')
 
     print('Finished Training')
