@@ -147,8 +147,8 @@ def get_101_data_split_by_macro_label(is_enumerate = False):
     return label_to_idx, train_data_loader_dict, test_data_loader
 
 
-def get_CIFAR100_full_training_tensor():
-    training_set = torch.load('./data/CIFAR100/training.pt')
+def get_CIFAR100_test_sample_tensor():
+    training_set = torch.load('./data/CIFAR100/test.pt')
     Xs = []
     Ys = []
     for img, label in training_set:
@@ -349,7 +349,7 @@ def getData(dataset_name):
 
 def get_full_data(dataset_name):
     if dataset_name == 'CIFAR100':
-        return get_CIFAR100_full_training_tensor()
+        return get_CIFAR100_test_sample_tensor()
 
     else:
         raise ValueError("No Such Dataset")
