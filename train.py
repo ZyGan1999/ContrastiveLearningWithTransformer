@@ -10,7 +10,7 @@ from tqdm import tqdm
 import torch
 import torchvision
 import numpy as np
-from dataprocessor.datacomposer import get_full_data
+from dataprocessor.datacomposer import get_sample_data
 import hyperparameters as HP
 from model.resnet50 import ResNet50
 from tensorboardX import SummaryWriter
@@ -348,25 +348,13 @@ def train(net, trainloader, testloader, is_con):
     contra_loss_func = contra_loss_func.cuda()
 
     batch_num = HP.train_set_size / HP.batch_size
-    data_tensor,label_tensor = get_full_data(HP.data_set)
+    data_tensor,label_tensor = get_sample_data(HP.data_set)
 
     for epoch in range(EPOCH):
 
         with torch.no_grad():
             representation,_ = net(data_tensor.cuda())
             draw(X=representation.cpu(),Y=label_tensor,msg='Training,'+'epoch='+str(epoch))
-        '''
-        if epoch == 0:
-            with torch.no_grad():
-                representation,_ = net(data_tensor.cuda())
-                print(representation.size())
-                draw(X=representation.cpu(),Y=label_tensor,msg='Before-Training')
-
-        elif epoch % 20 == 0:
-            with torch.no_grad():
-                representation,_ = net(data_tensor.cuda())
-                draw(X=representation.cpu(),Y=label_tensor,msg='Training,'+'epoch='+str(epoch))
-        '''
         
         epoch_loss = 0.0
         running_con_loss = 0.0
@@ -374,6 +362,7 @@ def train(net, trainloader, testloader, is_con):
         for step, (b_x,b_y)in enumerate(trainloader):
             b_x = b_x.cuda()
             b_y = b_y.cuda()
+            print(b_x.size(),b_y.size())
             representation, cls_rtn = net(b_x) # 喂给 net 训练数据 x, 输出预测值
 
             cls_loss = cls_loss_func(cls_rtn, b_y)

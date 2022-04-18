@@ -10,11 +10,11 @@ dim_v = 2048
 n_heads = 8
 
 
-data_set = 'CIFAR100'
+data_set = 'mini-imagenet'
 
 alpha = 0.1
 
-attention = False
+attention = True
 contrastive  = False
 
 

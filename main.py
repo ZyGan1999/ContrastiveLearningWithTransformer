@@ -12,7 +12,7 @@ from model.CNN import CNN_NET
 import torch
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "5,2,3,4,1,0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 #label_to_idx, train_data_loader_dict, test_loader = get_101_data_split_by_macro_label(is_enumerate=False)
 #idx_to_label = dict(zip(label_to_idx.values(), label_to_idx.keys()))
@@ -26,7 +26,7 @@ if HP.attention:
 else:
     net = ResNet50(category_num=HP.cls_num)
 net = net.cuda()
-net = torch.nn.parallel.DataParallel(net, device_ids=[0,1,2,3,4,5])
+#net = torch.nn.parallel.DataParallel(net, device_ids=[0,1,2,3,4,5])
 
 print(net.named_children())
 

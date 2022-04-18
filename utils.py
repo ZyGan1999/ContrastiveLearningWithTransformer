@@ -5,6 +5,34 @@ import matplotlib.pyplot as plt
 from tensorboardX import SummaryWriter
 import torch
 
+import pandas as pd
+from PIL import Image
+from torch.utils.data import Dataset,DataLoader
+import torch
+from torchvision import transforms
+
+class mini_imagenet_Dataset(Dataset):
+    def __init__(self, filepath, transform=None, target_transform=None):
+        contents = pd.read_csv(filepath)
+        imgs = []
+        for i in range(len(contents)):
+            imgs.append(('./data/mini-imagenet/images/' + contents.iloc[i,0],contents.iloc[i,1]))
+        self.imgs = imgs
+        self.transform = transform
+        self.target_transform = target_transform
+
+    def __getitem__(self, index):
+        fn, label = self.imgs[index]
+        img = Image.open(fn).convert('RGB')
+        img = img.resize((500, 500),Image.ANTIALIAS)
+        img = transforms.functional.to_tensor(img) # PIL to tensor
+        if self.transform is not None:
+            img = self.transform(img)
+        return img,label
+ 
+    def __len__(self):
+        return len(self.imgs)
+
 def single_channel_to_3_channel(ts):
     '''
     ts is a tensor with shape (len, h, w)
@@ -34,6 +62,8 @@ def get_train_set_size(data_set):
         rtn = 60000
     elif data_set == 'VOC':
         rtn = 1905
+    elif data_set == 'mini-imagenet':
+        rtn = 50000
 
     else:
         raise ValueError("No Such Dataset")
@@ -56,6 +86,8 @@ def get_cls_num(data_set):
     elif data_set == 'MNIST_orientation':
         rtn = 3
     elif data_set == 'VOC':
+        rtn = 2
+    elif data_set == 'mini-imagenet':
         rtn = 2
     
     else:
