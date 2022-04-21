@@ -64,6 +64,8 @@ def get_train_set_size(data_set):
         rtn = 1905
     elif data_set == 'mini-imagenet':
         rtn = 50000
+    elif data_set == 'mini-imagenet-mb':
+        rtn = 4000
 
     else:
         raise ValueError("No Such Dataset")
@@ -88,6 +90,8 @@ def get_cls_num(data_set):
     elif data_set == 'VOC':
         rtn = 2
     elif data_set == 'mini-imagenet':
+        rtn = 2
+    elif data_set == 'mini-imagenet-mb':
         rtn = 2
     
     else:

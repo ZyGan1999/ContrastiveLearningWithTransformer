@@ -344,7 +344,26 @@ def get_mini_imagenet_animal_test_sample_tensor():
     return datatensor,labeltensor
 
 
+def get_mini_imagenet_mammalbird_data_loader():
+    train_data = mini_imagenet_Dataset('./data/mini-imagenet/contents_mammal_or_bird/train.csv')
+    test_data = mini_imagenet_Dataset('./data/mini-imagenet/contents_mammal_or_bird/test.csv')
 
+    train_loader = DataLoader(dataset=train_data, batch_size = HP.batch_size, shuffle=True, num_workers = 2, drop_last=True)
+    test_loader = DataLoader(dataset=test_data, batch_size = HP.batch_size, shuffle=True, num_workers = 2, drop_last=True)
+
+    print('train and test size: ', len(train_data), len(test_data))
+
+    return train_loader, test_loader
+
+def get_mini_imagenet_mammalbird_test_sample_tensor():
+    test_data = mini_imagenet_Dataset('./data/mini-imagenet/contents_mammal_or_bird/test.csv')
+    test_loader = DataLoader(dataset=test_data, batch_size = HP.sample_num, shuffle=True, num_workers = 2, drop_last=True)
+
+    datatensor, labeltensor = next(iter(test_loader))
+
+    print('get random tensor for drawing',datatensor.size(),labeltensor.size())
+
+    return datatensor,labeltensor
 
 
 
@@ -373,14 +392,19 @@ def getData(dataset_name):
     elif dataset_name == 'mini-imagenet':
         return get_mini_imagenet_animal_data_loader()
 
+    elif dataset_name == 'mini-imagenet-mb':
+        return get_mini_imagenet_mammalbird_data_loader()
+
     else:
         raise ValueError("No Such Dataset")
 
 def get_sample_data(dataset_name):
     if dataset_name == 'CIFAR100':
         return get_CIFAR100_test_sample_tensor()
-    if dataset_name == 'mini-imagenet':
+    elif dataset_name == 'mini-imagenet':
         return get_mini_imagenet_animal_test_sample_tensor()
+    elif dataset_name == 'mini-imagenet-mb':
+        return get_mini_imagenet_mammalbird_test_sample_tensor()
 
     else:
         raise ValueError("No Such Dataset")

@@ -15,7 +15,7 @@ data_set = 'mini-imagenet'
 alpha = 0.1
 
 attention = True
-contrastive  = False
+contrastive  = True
 
 
 from utils import get_train_set_size

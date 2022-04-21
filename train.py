@@ -362,7 +362,7 @@ def train(net, trainloader, testloader, is_con):
         for step, (b_x,b_y)in enumerate(trainloader):
             b_x = b_x.cuda()
             b_y = b_y.cuda()
-            print(b_x.size(),b_y.size())
+            #print(b_x.size(),b_y.size())
             representation, cls_rtn = net(b_x) # 喂给 net 训练数据 x, 输出预测值
 
             cls_loss = cls_loss_func(cls_rtn, b_y)
@@ -393,6 +393,7 @@ def train(net, trainloader, testloader, is_con):
         else:
             print('[epoch %d] loss = %.3f   accuracy = %.3f' % (epoch,epoch_loss,accuracy))
         epoch_loss = 0
+        torch.save({'model': net.state_dict()}, 'current.pth')
     
     with torch.no_grad():
         representation,_ = best_model(data_tensor.cuda())
