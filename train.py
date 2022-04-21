@@ -393,7 +393,7 @@ def train(net, trainloader, testloader, is_con):
         else:
             print('[epoch %d] loss = %.3f   accuracy = %.3f' % (epoch,epoch_loss,accuracy))
         epoch_loss = 0
-        torch.save({'model': net.state_dict()}, 'current.pth')
+        torch.save({'model': net.state_dict()}, HP.outname+'-current.pth')
     
     with torch.no_grad():
         representation,_ = best_model(data_tensor.cuda())

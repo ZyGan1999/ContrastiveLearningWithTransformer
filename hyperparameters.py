@@ -10,12 +10,12 @@ dim_v = 2048
 n_heads = 8
 
 
-data_set = 'mini-imagenet'
+data_set = 'ut-zap50k-4'
 
 alpha = 0.1
 
-attention = True
-contrastive  = True
+attention = False
+contrastive  = False
 
 
 from utils import get_train_set_size
@@ -24,3 +24,5 @@ train_set_size = get_train_set_size(data_set)
 cls_num = get_cls_num(data_set)
 
 sample_num = 300
+
+outname = f'dataset:{data_set}-attention:{attention}-contrastive:{contrastive}'

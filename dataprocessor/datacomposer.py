@@ -15,6 +15,7 @@ from torchvision import transforms
 from PIL import Image
 from utils import single_channel_to_3_channel
 from utils import mini_imagenet_Dataset
+from utils import ut_zap50k_Dataset
 
 def get_CIFAR10_re_dataset():
     '''
@@ -365,6 +366,49 @@ def get_mini_imagenet_mammalbird_test_sample_tensor():
 
     return datatensor,labeltensor
 
+def get_ut_zap50k_4_data_loader():
+    train_data = ut_zap50k_Dataset('./data/ut-zap50k-images/contents/train.csv',is_binary=False)
+    test_data = ut_zap50k_Dataset('./data/ut-zap50k-images/contents/test.csv',is_binary=False)
+
+    train_loader = DataLoader(dataset=train_data, batch_size = HP.batch_size, shuffle=True, num_workers = 2, drop_last=True)
+    test_loader = DataLoader(dataset=test_data, batch_size = HP.batch_size, shuffle=True, num_workers = 2, drop_last=True)
+
+    print('train and test size: ', len(train_data), len(test_data))
+
+    return train_loader, test_loader
+
+def get_ut_zap50k_4_test_sample_tensor():
+    test_data = ut_zap50k_Dataset('./data/ut-zap50k-images/contents/test.csv',is_binary=False)
+    test_loader = DataLoader(dataset=test_data, batch_size = HP.sample_num, shuffle=True, num_workers = 2, drop_last=True)
+
+    datatensor, labeltensor = next(iter(test_loader))
+
+    print('get random tensor for drawing',datatensor.size(),labeltensor.size())
+
+    return datatensor,labeltensor
+
+
+def get_ut_zap50k_2_data_loader():
+    train_data = ut_zap50k_Dataset('./data/ut-zap50k-images/contents/train.csv',is_binary=True)
+    test_data = ut_zap50k_Dataset('./data/ut-zap50k-images/contents/test.csv',is_binary=True)
+
+    train_loader = DataLoader(dataset=train_data, batch_size = HP.batch_size, shuffle=True, num_workers = 2, drop_last=True)
+    test_loader = DataLoader(dataset=test_data, batch_size = HP.batch_size, shuffle=True, num_workers = 2, drop_last=True)
+
+    print('train and test size: ', len(train_data), len(test_data))
+
+    return train_loader, test_loader
+
+def get_ut_zap50k_2_test_sample_tensor():
+    test_data = ut_zap50k_Dataset('./data/ut-zap50k-images/contents/test.csv',is_binary=True)
+    test_loader = DataLoader(dataset=test_data, batch_size = HP.sample_num, shuffle=True, num_workers = 2, drop_last=True)
+
+    datatensor, labeltensor = next(iter(test_loader))
+
+    print('get random tensor for drawing',datatensor.size(),labeltensor.size())
+
+    return datatensor,labeltensor
+
 
 
 def getData(dataset_name):
@@ -395,6 +439,12 @@ def getData(dataset_name):
     elif dataset_name == 'mini-imagenet-mb':
         return get_mini_imagenet_mammalbird_data_loader()
 
+    elif dataset_name == 'ut-zap50k-4':
+        return get_ut_zap50k_4_data_loader()
+
+    elif dataset_name == 'ut-zap50k-2':
+        return get_ut_zap50k_2_data_loader()
+
     else:
         raise ValueError("No Such Dataset")
 
@@ -405,6 +455,10 @@ def get_sample_data(dataset_name):
         return get_mini_imagenet_animal_test_sample_tensor()
     elif dataset_name == 'mini-imagenet-mb':
         return get_mini_imagenet_mammalbird_test_sample_tensor()
+    elif dataset_name == 'ut-zap50k-4':
+        return get_ut_zap50k_4_test_sample_tensor()
+    elif dataset_name == 'ut-zap50k-2':
+        return get_ut_zap50k_2_test_sample_tensor()
 
     else:
         raise ValueError("No Such Dataset")

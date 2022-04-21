@@ -10,6 +10,7 @@ from PIL import Image
 from torch.utils.data import Dataset,DataLoader
 import torch
 from torchvision import transforms
+import os
 
 class mini_imagenet_Dataset(Dataset):
     def __init__(self, filepath, transform=None, target_transform=None):
@@ -32,6 +33,35 @@ class mini_imagenet_Dataset(Dataset):
  
     def __len__(self):
         return len(self.imgs)
+
+
+class ut_zap50k_Dataset(Dataset):
+    def __init__(self, filepath, transform=None, target_transform=None, is_binary=True):
+        contents = pd.read_csv(filepath)
+        imgs = []
+        for i in range(len(contents)):
+            if is_binary:
+                imgs.append((contents.iloc[i,0],contents.iloc[i,2]))
+            else:
+                imgs.append((contents.iloc[i,0],contents.iloc[i,1]))
+        self.imgs = imgs
+        self.transform = transform
+        self.target_transform = target_transform
+ 
+    def __getitem__(self, index):
+        fn, label = self.imgs[index]
+        fn = fn.replace('./','./data/ut-zap50k-images/')
+        img = Image.open(fn).convert('RGB')
+        img = img.resize((100, 100),Image.ANTIALIAS)
+        img = transforms.functional.to_tensor(img) # PIL to tensor
+        if self.transform is not None:
+            img = self.transform(img)
+        return img,label
+ 
+    def __len__(self):
+        return len(self.imgs)
+
+
 
 def single_channel_to_3_channel(ts):
     '''
@@ -66,6 +96,10 @@ def get_train_set_size(data_set):
         rtn = 50000
     elif data_set == 'mini-imagenet-mb':
         rtn = 4000
+    elif data_set == 'ut-zap50k-4':
+        rtn = 41687
+    elif data_set == 'ut-zap50k-2':
+        rtn = 41687
 
     else:
         raise ValueError("No Such Dataset")
@@ -92,6 +126,10 @@ def get_cls_num(data_set):
     elif data_set == 'mini-imagenet':
         rtn = 2
     elif data_set == 'mini-imagenet-mb':
+        rtn = 2
+    elif data_set == 'ut-zap50k-4':
+        rtn = 4
+    elif data_set == 'ut-zap50k-2':
         rtn = 2
     
     else:
@@ -184,5 +222,8 @@ def draw(X,Y,msg):
     tsne = TSNE(n_components=2, learning_rate=200).fit_transform(X)
     plt.figure(figsize=(12, 12))
     plt.scatter(tsne[:, 0], tsne[:, 1], c=Y)
-    plt.savefig('tsneimg/'+msg+'.png', dpi=120)
+    #plt.savefig('tsneimg/'+msg+'.png', dpi=120)
+    if not os.path.exists(HP.outname):
+        os.mkdir(HP.outname)
+    plt.savefig(HP.outname+'/'+msg+'.png', dpi=120)
     plt.close()
