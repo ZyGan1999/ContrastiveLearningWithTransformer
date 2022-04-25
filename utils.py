@@ -153,6 +153,55 @@ def calc_accuracy(net, test_loader):
             correct+=(predicted==labels).sum().item()
     return correct / total
 
+def eval(net,testloader):
+    net.eval()
+    correct = 0
+    total = 0
+    classnum = HP.cls_num
+    target_num = torch.zeros((1,classnum))
+    predict_num = torch.zeros((1,classnum))
+    acc_num = torch.zeros((1,classnum))
+    with torch.no_grad():
+        for batch_idx, (inputs, targets) in enumerate(testloader):
+            
+            inputs, targets = inputs.cuda(), targets.cuda()
+
+            _,outputs = net(inputs)
+
+
+            _, predicted = torch.max(outputs, 1)
+            total += targets.size(0)
+            correct += predicted.eq(targets.data).cpu().sum()
+            pre_mask = torch.zeros(outputs.size()).scatter_(1, predicted.cpu().view(-1, 1), 1.)
+            predict_num += pre_mask.sum(0)
+            tar_mask = torch.zeros(outputs.size()).scatter_(1, targets.data.cpu().view(-1, 1), 1.)
+            target_num += tar_mask.sum(0)
+            acc_mask = pre_mask*tar_mask
+            acc_num += acc_mask.sum(0)
+    recall = acc_num/target_num
+    precision = acc_num/predict_num
+    F1 = 2*recall*precision/(recall+precision)
+    accuracy = acc_num.sum(1)/target_num.sum(1)
+
+    rtn_recall_mean = recall.mean()
+    rtn_precision = precision.mean()
+    rtn_F1_mean = F1.mean()
+    rtn_accuracy = accuracy
+    
+
+#精度调整
+    recall = (recall.numpy()[0]*100).round(3)
+    precision = (precision.numpy()[0]*100).round(3)
+    F1 = (F1.numpy()[0]*100).round(3)
+    accuracy = (accuracy.numpy()[0]*100).round(3)
+# 打印格式方便复制
+    print('recall'," ".join('%s' % id for id in recall))
+    print('precision'," ".join('%s' % id for id in precision))
+    print('F1'," ".join('%s' % id for id in F1))
+    print('accuracy',accuracy)
+
+
+    return rtn_recall_mean.item(), rtn_precision.item(), rtn_F1_mean.item(), rtn_accuracy.item()
 
 
 def get_iter_dict(loader_dict):

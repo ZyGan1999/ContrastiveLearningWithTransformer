@@ -1,4 +1,5 @@
-from tkinter.tix import Tree
+import datetime
+import time
 
 
 batch_size = 64 # batch size in the training
@@ -10,12 +11,12 @@ dim_v = 2048
 n_heads = 8
 
 
-data_set = 'ut-zap50k-4'
+data_set = 'mini-imagenet-mb'
 
 alpha = 0.1
 
-attention = False
-contrastive  = False
+attention = True
+contrastive  = True
 
 
 from utils import get_train_set_size
@@ -25,4 +26,6 @@ cls_num = get_cls_num(data_set)
 
 sample_num = 300
 
-outname = f'dataset:{data_set}-attention:{attention}-contrastive:{contrastive}'
+curr_time = datetime.datetime.now()
+
+outname = f'dataset:{data_set}-attention:{attention}-contrastive:{contrastive}-time:{curr_time}'
