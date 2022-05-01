@@ -154,7 +154,6 @@ def calc_accuracy(net, test_loader):
     return correct / total
 
 def eval(net,testloader):
-    net.eval()
     correct = 0
     total = 0
     classnum = HP.cls_num
@@ -255,7 +254,7 @@ def get_model_name():
 
     return '||'+rtn+'||'
 
-tag_name = '[dataset]='+HP.data_set+' - '+'[batch_size]='+str(HP.batch_size)+' - '+'[dim_k]='+str(HP.dim_k)+' - '+'[dim_v]='+str(HP.dim_v)+' - '+'[n_heads]='+str(HP.n_heads)+' - '+'[lr]='+str(HP.learning_rate) + ' - ' +'[alpha]='+str(HP.alpha)
+tag_name = '[backbone]='+HP.backbone+'[dataset]='+HP.data_set+' - '+'[batch_size]='+str(HP.batch_size)+' - '+'[dim_k]='+str(HP.dim_k)+' - '+'[dim_v]='+str(HP.dim_v)+' - '+'[n_heads]='+str(HP.n_heads)+' - '+'[lr]='+str(HP.learning_rate) + ' - ' +'[alpha]='+str(HP.alpha)
 writer = SummaryWriter(comment = get_model_name()+tag_name)
 
 def draw(X,Y,msg):
@@ -276,3 +275,5 @@ def draw(X,Y,msg):
         os.mkdir(HP.outname)
     plt.savefig(HP.outname+'/'+msg+'.png', dpi=120)
     plt.close()
+
+

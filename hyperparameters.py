@@ -11,7 +11,8 @@ dim_v = 2048
 n_heads = 8
 
 
-data_set = 'mini-imagenet-mb'
+data_set = 'CIFAR100'
+backbone = 'ResNet34'
 
 alpha = 0.1
 
@@ -28,4 +29,4 @@ sample_num = 300
 
 curr_time = datetime.datetime.now()
 
-outname = f'dataset:{data_set}-attention:{attention}-contrastive:{contrastive}-time:{curr_time}'
+outname = f'backbone:{backbone}-dataset:{data_set}-attention:{attention}-contrastive:{contrastive}-time:{curr_time}'

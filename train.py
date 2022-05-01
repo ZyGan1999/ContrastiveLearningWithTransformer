@@ -23,8 +23,10 @@ from utils import writer
 from utils import freeze_by_names
 from utils import draw
 from utils import tag_name
+from utils import eval
 
 from model.contrastive import ContrastiveLoss
+
 
 #torch.cuda.set_device(3)
 
@@ -387,17 +389,25 @@ def train(net, trainloader, testloader, is_con):
         if accuracy > best_acc:
             best_acc = accuracy
             best_model = net
+            with torch.no_grad():
+                representation,_ = best_model(data_tensor.cuda())
+                draw(X=representation.cpu(),Y=label_tensor,msg='Best-Training')
+                
         writer.add_scalar('accuracy', accuracy, global_step = epoch)
         if is_con:
             print('[epoch %d] total_loss = %.3f   contra_loss = %.3f   cls_loss = %.3f   accuracy = %.3f' % (epoch,epoch_loss,running_con_loss,running_cls_loss,accuracy))
         else:
             print('[epoch %d] loss = %.3f   accuracy = %.3f' % (epoch,epoch_loss,accuracy))
         epoch_loss = 0
+        recall_mean, precision_mean, F1_mean, rtn_accuracy = eval(net,testloader)
+        writer.add_scalar('recall', recall_mean, global_step = epoch)
+        writer.add_scalar('precision', precision_mean, global_step = epoch)
+        writer.add_scalar('F1', F1_mean, global_step = epoch)
+        writer.add_scalar('acc2', rtn_accuracy, global_step = epoch)
+        #print(rtn_recall_mean, rtn_precision, rtn_F1_mean, rtn_accuracy)
         torch.save({'model': net.state_dict()}, HP.outname+'-current.pth')
     
-    with torch.no_grad():
-        representation,_ = best_model(data_tensor.cuda())
-        draw(X=representation.cpu(),Y=label_tensor,msg='Best-Training')
+        
 
     torch.save({'model': best_model.state_dict()}, tag_name+'.pth')
 

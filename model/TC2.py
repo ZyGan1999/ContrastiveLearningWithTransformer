@@ -9,6 +9,10 @@ import hyperparameters as HP
 
 from model.resnet50 import ResNet50
 from model.CNN import CNN_NET
+from model.resnetxx import ResNet18
+from model.resnetxx import ResNet34
+from model.resnetxx import ResNet101
+from model.resnetxx import ResNet152
 
 
 class MultiHeadSelfAttention(nn.Module):
@@ -53,16 +57,41 @@ class MultiHeadSelfAttention(nn.Module):
 
 
 
+def get_backbone(backbone):
+    if backbone == 'ResNet50':
+        return ResNet50(category_num=HP.cls_num)
+    elif backbone == 'ResNet18':
+        return ResNet18(category_num=HP.cls_num)
+    elif backbone == 'ResNet34':
+        return ResNet34(category_num=HP.cls_num)
+    elif backbone == 'ResNet101':
+        return ResNet101(category_num=HP.cls_num)
+    elif backbone == 'ResNet152':
+        return ResNet152(category_num=HP.cls_num)
+    else:
+        raise ValueError("No Such Backbone")
 
-
-
+def get_emb_len(backbone):
+    if backbone == 'ResNet50':
+        return 2048
+    elif backbone == 'ResNet18':
+        return 512
+    elif backbone == 'ResNet34':
+        return 512
+    elif backbone == 'ResNet101':
+        return 2048
+    elif backbone == 'ResNet152':
+        return 2048
+    else:
+        raise ValueError("No Such Backbone")
 
 
 class TransformerContrastive(nn.Module):
     def __init__(self):
         super().__init__()
-        self.slf_attn = MultiHeadSelfAttention(dim_in=2048, dim_k=HP.dim_k, dim_v=HP.dim_v, num_heads=HP.n_heads) # transformer module
-        self.slf_embed = ResNet50(category_num=HP.cls_num) # embedding module
+        self.slf_attn = MultiHeadSelfAttention(dim_in = get_emb_len(HP.backbone), dim_k=HP.dim_k, dim_v=HP.dim_v, num_heads=HP.n_heads) # transformer module
+        #self.slf_embed = ResNet50(category_num=HP.cls_num) # embedding module
+        self.slf_embed = get_backbone(HP.backbone)
         # contrastive learning module
 
         self.linear = nn.Linear(HP.dim_v, HP.cls_num)
