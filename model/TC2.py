@@ -7,7 +7,7 @@ import numpy as np
 import torch.nn.functional as F
 import hyperparameters as HP
 
-from model.resnet50 import ResNet50
+from model.resnetxx import ResNet50
 from model.CNN import CNN_NET
 from model.resnetxx import ResNet18
 from model.resnetxx import ResNet34

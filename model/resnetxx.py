@@ -81,6 +81,8 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(block, 512, num_blocks[3], stride=2)
         self.linear = nn.Linear(512*block.expansion, num_classes)
 
+        self.avg_pool = nn.AdaptiveAvgPool2d(output_size=(1, 1))
+
     def _make_layer(self, block, planes, num_blocks, stride):
         strides = [stride] + [1]*(num_blocks-1)
         layers = []
@@ -95,9 +97,16 @@ class ResNet(nn.Module):
         out = self.layer2(out)
         out = self.layer3(out)
         out = self.layer4(out)
-        out = F.avg_pool2d(out, 4)
+        #out = F.avg_pool2d(out, 4)
+        out = self.avg_pool(out)
         out = out.view(out.size(0), -1)
+
         representation = out
+
+        # L2 Regulization
+        norm = torch.norm(representation,2,1,True)
+        representation = torch.div(representation, norm)
+
         out = self.linear(out)
         return representation, out
 

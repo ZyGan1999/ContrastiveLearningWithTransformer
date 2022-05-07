@@ -409,7 +409,156 @@ def get_ut_zap50k_2_test_sample_tensor():
 
     return datatensor,labeltensor
 
+def get_cifar100_4_data_loader():
+    training_set = torch.load('./data/re_cifar100/4_categories/train.pt')
+    print('length of training set: ', len(training_set))
+    Xs = []
+    Ys = []
+    for x, label in training_set:
+        #x = transforms.functional.to_tensor(img) # PIL to tensor
+        Xs.append(x)
+        Ys.append(label)
+    training_data_tensors = torch.stack(Xs)
+    training_label_tensors = torch.tensor(Ys)
+    training_data_loader = DataLoader(dataset = TensorDataset(training_data_tensors, training_label_tensors), batch_size = HP.batch_size, shuffle = True, num_workers = 2, drop_last=True)
 
+    test_set = torch.load('./data/re_cifar100/4_categories/test.pt')
+    print('length of test set: ', len(test_set))
+    Xs = []
+    Ys = []
+    for x, label in test_set:
+        #x = transforms.functional.to_tensor(img) # PIL to tensor
+        Xs.append(x)
+        Ys.append(label)
+    test_data_tensors = torch.stack(Xs)
+    test_label_tensors = torch.tensor(Ys)
+    test_data_loader = DataLoader(dataset = TensorDataset(test_data_tensors, test_label_tensors), batch_size = HP.batch_size, shuffle = True, num_workers = 2, drop_last=True)
+
+
+    print(training_data_tensors.size(), training_label_tensors.size())
+    print(test_data_tensors.size(), test_label_tensors.size())
+
+    return training_data_loader, test_data_loader
+
+def get_CIFAR100_4_test_sample_tensor():
+    training_set = torch.load('./data/re_cifar100/4_categories/test.pt')
+    Xs = []
+    Ys = []
+    for x, label in training_set:
+        #x = transforms.functional.to_tensor(img) # PIL to tensor
+        Xs.append(x)
+        Ys.append(label)
+    training_data_tensors = torch.stack(Xs)
+    training_label_tensors = torch.tensor(Ys)
+
+    index = torch.LongTensor(random.sample(range(10000), HP.sample_num))
+    training_data_tensors = torch.index_select(training_data_tensors, dim=0, index=index)
+    training_label_tensors = torch.index_select(training_label_tensors, dim=0, index=index)
+
+    print('get random tensor for drawing',training_data_tensors.size(),training_label_tensors.size())
+
+    return training_data_tensors, training_label_tensors
+
+def get_cifar100_7_data_loader():
+    training_set = torch.load('./data/re_cifar100/7_categories/train.pt')
+    print('length of training set: ', len(training_set))
+    Xs = []
+    Ys = []
+    for x, label in training_set:
+        #x = transforms.functional.to_tensor(img) # PIL to tensor
+        Xs.append(x)
+        Ys.append(label)
+    training_data_tensors = torch.stack(Xs)
+    training_label_tensors = torch.tensor(Ys)
+    training_data_loader = DataLoader(dataset = TensorDataset(training_data_tensors, training_label_tensors), batch_size = HP.batch_size, shuffle = True, num_workers = 2, drop_last=True)
+
+    test_set = torch.load('./data/re_cifar100/7_categories/test.pt')
+    print('length of test set: ', len(test_set))
+    Xs = []
+    Ys = []
+    for x, label in test_set:
+        #x = transforms.functional.to_tensor(img) # PIL to tensor
+        Xs.append(x)
+        Ys.append(label)
+    test_data_tensors = torch.stack(Xs)
+    test_label_tensors = torch.tensor(Ys)
+    test_data_loader = DataLoader(dataset = TensorDataset(test_data_tensors, test_label_tensors), batch_size = HP.batch_size, shuffle = True, num_workers = 2, drop_last=True)
+
+
+    print(training_data_tensors.size(), training_label_tensors.size())
+    print(test_data_tensors.size(), test_label_tensors.size())
+
+    return training_data_loader, test_data_loader
+
+def get_CIFAR100_7_test_sample_tensor():
+    training_set = torch.load('./data/re_cifar100/7_categories/test.pt')
+    Xs = []
+    Ys = []
+    for x, label in training_set:
+        #x = transforms.functional.to_tensor(img) # PIL to tensor
+        Xs.append(x)
+        Ys.append(label)
+    training_data_tensors = torch.stack(Xs)
+    training_label_tensors = torch.tensor(Ys)
+
+    index = torch.LongTensor(random.sample(range(10000), HP.sample_num))
+    training_data_tensors = torch.index_select(training_data_tensors, dim=0, index=index)
+    training_label_tensors = torch.index_select(training_label_tensors, dim=0, index=index)
+
+    print('get random tensor for drawing',training_data_tensors.size(),training_label_tensors.size())
+
+    return training_data_tensors, training_label_tensors
+
+def get_cifar100_3_data_loader():
+    training_set = torch.load('./data/re_cifar100/3_categories/train.pt')
+    print('length of training set: ', len(training_set))
+    Xs = []
+    Ys = []
+    for x, label in training_set:
+        #x = transforms.functional.to_tensor(img) # PIL to tensor
+        Xs.append(x)
+        Ys.append(label)
+        #print(label)
+    training_data_tensors = torch.stack(Xs)
+    training_label_tensors = torch.tensor(Ys)
+    training_data_loader = DataLoader(dataset = TensorDataset(training_data_tensors, training_label_tensors), batch_size = HP.batch_size, shuffle = True, num_workers = 2, drop_last=True)
+
+    test_set = torch.load('./data/re_cifar100/3_categories/test.pt')
+    print('length of test set: ', len(test_set))
+    Xs = []
+    Ys = []
+    for x, label in test_set:
+        #x = transforms.functional.to_tensor(img) # PIL to tensor
+        Xs.append(x)
+        Ys.append(label)
+    test_data_tensors = torch.stack(Xs)
+    test_label_tensors = torch.tensor(Ys)
+    test_data_loader = DataLoader(dataset = TensorDataset(test_data_tensors, test_label_tensors), batch_size = HP.batch_size, shuffle = True, num_workers = 2, drop_last=True)
+
+
+    print(training_data_tensors.size(), training_label_tensors.size())
+    print(test_data_tensors.size(), test_label_tensors.size())
+
+    return training_data_loader, test_data_loader
+
+def get_CIFAR100_3_test_sample_tensor():
+    training_set = torch.load('./data/re_cifar100/3_categories/test.pt')
+    Xs = []
+    Ys = []
+    for x, label in training_set:
+        #x = transforms.functional.to_tensor(img) # PIL to tensor
+        Xs.append(x)
+        Ys.append(label)
+    training_data_tensors = torch.stack(Xs)
+    training_label_tensors = torch.tensor(Ys)
+
+    index = torch.LongTensor(random.sample(range(10000), HP.sample_num))
+    training_data_tensors = torch.index_select(training_data_tensors, dim=0, index=index)
+    training_label_tensors = torch.index_select(training_label_tensors, dim=0, index=index)
+
+    print('get random tensor for drawing',training_data_tensors.size(),training_label_tensors.size())
+
+    return training_data_tensors, training_label_tensors
 
 def getData(dataset_name):
     if dataset_name == 'CIFAR10':
@@ -445,6 +594,15 @@ def getData(dataset_name):
     elif dataset_name == 'ut-zap50k-2':
         return get_ut_zap50k_2_data_loader()
 
+    elif dataset_name == 'CIFAR100-4':
+        return get_cifar100_4_data_loader()
+
+    elif dataset_name == 'CIFAR100-7':
+        return get_cifar100_7_data_loader()
+
+    elif dataset_name == 'CIFAR100-3':
+        return get_cifar100_3_data_loader()
+
     else:
         raise ValueError("No Such Dataset")
 
@@ -459,6 +617,12 @@ def get_sample_data(dataset_name):
         return get_ut_zap50k_4_test_sample_tensor()
     elif dataset_name == 'ut-zap50k-2':
         return get_ut_zap50k_2_test_sample_tensor()
+    elif dataset_name == 'CIFAR100-4':
+        return get_CIFAR100_4_test_sample_tensor()
+    elif dataset_name == 'CIFAR100-7':
+        return get_CIFAR100_7_test_sample_tensor()
+    elif dataset_name == 'CIFAR100-3':
+        return get_CIFAR100_3_test_sample_tensor()
 
     else:
         raise ValueError("No Such Dataset")

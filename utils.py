@@ -100,6 +100,12 @@ def get_train_set_size(data_set):
         rtn = 41687
     elif data_set == 'ut-zap50k-2':
         rtn = 41687
+    elif data_set == 'CIFAR100-4':
+        rtn = 50000
+    elif data_set == 'CIFAR100-7':
+        rtn = 50000
+    elif data_set == 'CIFAR100-3':
+        rtn = 50000
 
     else:
         raise ValueError("No Such Dataset")
@@ -131,6 +137,12 @@ def get_cls_num(data_set):
         rtn = 4
     elif data_set == 'ut-zap50k-2':
         rtn = 2
+    elif data_set == 'CIFAR100-4':
+        rtn = 4
+    elif data_set == 'CIFAR100-7':
+        rtn = 7
+    elif data_set == 'CIFAR100-3':
+        rtn = 3
     
     else:
         raise ValueError("No Such Dataset")
