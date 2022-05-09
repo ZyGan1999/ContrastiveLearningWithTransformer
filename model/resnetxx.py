@@ -103,10 +103,6 @@ class ResNet(nn.Module):
 
         representation = out
 
-        # L2 Regulization
-        norm = torch.norm(representation,2,1,True)
-        representation = torch.div(representation, norm)
-
         out = self.linear(out)
         return representation, out
 

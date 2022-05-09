@@ -96,11 +96,25 @@ class TransformerContrastive(nn.Module):
 
         self.linear = nn.Linear(HP.dim_v, HP.cls_num)
 
+        self.g = nn.Sequential(nn.Linear(2048, 512, bias=False),
+                               nn.BatchNorm1d(512),
+                               nn.ReLU(inplace=True),
+                               nn.Linear(512, 128, bias=True),
+                               nn.Linear(128, HP.cls_num))
+
     def forward(self, x):
         embedded_data, _ = self.slf_embed(x) # get the embedding of the data of a batch by resnet50
         embedded_data = torch.reshape(embedded_data,(1,embedded_data.size(0),embedded_data.size(1))) # (batchsize, emb_len) -> (1(batchsize), batchsize(n), emb_len)
         attn = self.slf_attn(embedded_data)
         attn = torch.reshape(attn, (attn.size(1), attn.size(2))) # (1, batchsize(n), dim_v) -> (batchsize(n), dim_v)
-        output = self.linear(attn)
+        
+        # L2 Regulization
+        norm = torch.norm(attn,2,1,True)
+        attn = torch.div(attn, norm)
+
+        if HP.G:
+            output = self.g(attn)
+        else:
+            output = self.linear(attn)
 
         return attn, output

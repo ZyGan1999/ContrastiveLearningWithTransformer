@@ -13,7 +13,7 @@ from model.CNN import CNN_NET
 import torch
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "2,3,4,1,5,0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "4,3,2,1,5,0"
 
 #label_to_idx, train_data_loader_dict, test_loader = get_101_data_split_by_macro_label(is_enumerate=False)
 #idx_to_label = dict(zip(label_to_idx.values(), label_to_idx.keys()))

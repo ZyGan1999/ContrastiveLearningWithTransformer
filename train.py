@@ -15,6 +15,7 @@ import hyperparameters as HP
 from model.resnet50 import ResNet50
 from tensorboardX import SummaryWriter
 from model.TC2 import TransformerContrastive
+from model.TC2 import get_emb_len
 import random
 
 from utils import get_iter_dict
@@ -26,6 +27,8 @@ from utils import tag_name
 from utils import eval
 
 from model.contrastive import ContrastiveLoss
+from model.TargetLoss import TargetLoss
+from model.target import get_target
 
 
 #torch.cuda.set_device(3)
@@ -348,6 +351,10 @@ def train(net, trainloader, testloader, is_con):
     cls_loss_func = torch.nn.CrossEntropyLoss()
     contra_loss_func = ContrastiveLoss()
     contra_loss_func = contra_loss_func.cuda()
+    target_loss_func = TargetLoss()
+    target_loss_func = target_loss_func.cuda()
+    target = get_target(num=HP.cls_num,dim=get_emb_len(HP.backbone))
+    target = target.cuda()
 
     batch_num = HP.train_set_size / HP.batch_size
     data_tensor,label_tensor = get_sample_data(HP.data_set)
@@ -361,6 +368,7 @@ def train(net, trainloader, testloader, is_con):
         epoch_loss = 0.0
         running_con_loss = 0.0
         running_cls_loss = 0.0
+        running_tar_loss = 0.0
         for step, (b_x,b_y)in enumerate(trainloader):
             b_x = b_x.cuda()
             b_y = b_y.cuda()
@@ -369,10 +377,15 @@ def train(net, trainloader, testloader, is_con):
 
             cls_loss = cls_loss_func(cls_rtn, b_y)
             contra_loss = contra_loss_func(representation, b_y)
+            target_loss = target_loss_func(representation, b_y, target)
             if is_con:
                 loss = HP.alpha * contra_loss + (1-HP.alpha) * cls_loss
             else:
                 loss = cls_loss
+
+            if HP.TARGET:
+                loss += HP.lmd * target_loss
+
             optimizer.zero_grad() # 清空上一步的残余更新参数值
             loss.backward() # 误差反向传播, 计算参数更新值
             optimizer.step() # 将参数更新值施加到 net 的 parameters 上
@@ -380,10 +393,12 @@ def train(net, trainloader, testloader, is_con):
             epoch_loss += loss.item()
             running_con_loss += contra_loss
             running_cls_loss += cls_loss
+            running_tar_loss += target_loss
 
         epoch_loss /= batch_num
         running_con_loss /= batch_num
         running_cls_loss /= batch_num
+        running_tar_loss /= batch_num
         writer.add_scalar('loss', epoch_loss, global_step = epoch)
         accuracy = calc_accuracy(net, testloader)
         if accuracy > best_acc:
@@ -398,6 +413,9 @@ def train(net, trainloader, testloader, is_con):
             print('[epoch %d] total_loss = %.3f   contra_loss = %.3f   cls_loss = %.3f   accuracy = %.3f' % (epoch,epoch_loss,running_con_loss,running_cls_loss,accuracy))
         else:
             print('[epoch %d] loss = %.3f   accuracy = %.3f' % (epoch,epoch_loss,accuracy))
+        
+        if HP.TARGET:
+            print(f'target loss = {running_tar_loss}')
         epoch_loss = 0
         recall_mean, precision_mean, F1_mean, rtn_accuracy = eval(net,testloader)
         writer.add_scalar('recall', recall_mean, global_step = epoch)

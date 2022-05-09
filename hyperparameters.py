@@ -2,23 +2,28 @@ import datetime
 import time
 
 
-batch_size = 64 # batch size in the training
+
+batch_size = 128 # batch size in the training
 learning_rate = 0.001 # learning rate in the training
 epoch_num = 100 # max epoch number in the training
 
 dim_k = 2048
 dim_v = 2048
-n_heads = 8
+n_heads = 16
 
 
-data_set = 'CIFAR100-3'
+data_set = 'CIFAR100-7'
 backbone = 'ResNet50'
 
-alpha = 0.1
+alpha = 0.5
+lmd = 1.0
 
 attention = True
 contrastive  = True
 
+G = True
+
+TARGET = True
 
 from utils import get_train_set_size
 from utils import get_cls_num
@@ -29,4 +34,14 @@ sample_num = 300
 
 curr_time = datetime.datetime.now()
 
-outname = f'backbone:{backbone}-dataset:{data_set}-attention:{attention}-contrastive:{contrastive}-time:{curr_time}'
+
+outname = f'[G:{G}]-[backbone:{backbone}]-[dataset:{data_set}]-[batch_size:{data_set}]-[dim_k:{dim_k}]-[dim_v:{dim_v}]-[n_heads:{n_heads}]-[lr:{learning_rate}]-[alpha:{alpha}]-[time:{curr_time}]'
+
+def get_outname():
+    outname = f'[G:{G}]-[backbone:{backbone}]-[dataset:{data_set}]-[batch_size:{data_set}]-[dim_k:{dim_k}]-[dim_v:{dim_v}]-[n_heads:{n_heads}]-[lr:{learning_rate}]-[alpha:{alpha}]-[time:{curr_time}]'
+    return outname
+
+#outname = f'[G:{G}]-[backbone:{backbone}]-[dataset:{data_set}]-[attention:{attention}]-[contrastive:{contrastive}]-time:{curr_time}'
+
+
+
