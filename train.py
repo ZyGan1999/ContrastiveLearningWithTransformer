@@ -29,6 +29,7 @@ from utils import eval
 from model.contrastive import ContrastiveLoss
 from model.TargetLoss import TargetLoss
 from model.target import get_target
+from model.target import Target
 
 
 #torch.cuda.set_device(3)
@@ -353,11 +354,12 @@ def train(net, trainloader, testloader, is_con):
     contra_loss_func = contra_loss_func.cuda()
     target_loss_func = TargetLoss()
     target_loss_func = target_loss_func.cuda()
-    target = get_target(num=HP.cls_num,dim=get_emb_len(HP.backbone))
-    target = target.cuda()
 
     batch_num = HP.train_set_size / HP.batch_size
     data_tensor,label_tensor = get_sample_data(HP.data_set)
+
+    t = Target()
+    t.generate_target(num=HP.cls_num,dim=get_emb_len(HP.backbone))
 
     for epoch in range(EPOCH):
 
@@ -370,6 +372,9 @@ def train(net, trainloader, testloader, is_con):
         running_cls_loss = 0.0
         running_tar_loss = 0.0
         for step, (b_x,b_y)in enumerate(trainloader):
+            #target = get_target(num=HP.cls_num,dim=get_emb_len(HP.backbone))
+            #target = target.cuda()
+            target = t.get_target()
             b_x = b_x.cuda()
             b_y = b_y.cuda()
             #print(b_x.size(),b_y.size())
@@ -378,6 +383,7 @@ def train(net, trainloader, testloader, is_con):
             cls_loss = cls_loss_func(cls_rtn, b_y)
             contra_loss = contra_loss_func(representation, b_y)
             target_loss = target_loss_func(representation, b_y, target)
+            #target_loss = 0
             if is_con:
                 loss = HP.alpha * contra_loss + (1-HP.alpha) * cls_loss
             else:
@@ -423,10 +429,10 @@ def train(net, trainloader, testloader, is_con):
         writer.add_scalar('F1', F1_mean, global_step = epoch)
         writer.add_scalar('acc2', rtn_accuracy, global_step = epoch)
         #print(rtn_recall_mean, rtn_precision, rtn_F1_mean, rtn_accuracy)
-        torch.save({'model': net.state_dict()}, HP.outname+'-current.pth')
+        torch.save({'model': net.state_dict()}, './backup/'+HP.outname+'-current.pth')
     
         
 
-    torch.save({'model': best_model.state_dict()}, tag_name+'.pth')
+    torch.save({'model': best_model.state_dict()}, './backup/'+tag_name+'.pth')
 
     print('Finished Training')

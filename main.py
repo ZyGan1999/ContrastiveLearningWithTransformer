@@ -1,4 +1,5 @@
 import imp
+from operator import imod
 import train
 import hyperparameters as HP
 from dataprocessor.datacomposer import get_CIFAR10_re_dataset
@@ -12,8 +13,10 @@ from model.resnet50 import ResNet50
 from model.CNN import CNN_NET
 import torch
 import os
+from model.target import get_target
+from model.TC2 import get_emb_len
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "4,3,2,1,5,0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "3,2,1,5,4"
 
 #label_to_idx, train_data_loader_dict, test_loader = get_101_data_split_by_macro_label(is_enumerate=False)
 #idx_to_label = dict(zip(label_to_idx.values(), label_to_idx.keys()))
@@ -30,7 +33,7 @@ else:
     #net = ResNet50(category_num=HP.cls_num)
     net = get_backbone(HP.backbone)
 net = net.cuda()
-net = torch.nn.parallel.DataParallel(net, device_ids=[0,1,2,3,4,5])
+net = torch.nn.parallel.DataParallel(net, device_ids=[0,1,2,3,4])
 
 print(net.named_children())
 
@@ -43,5 +46,6 @@ if HP.contrastive:
 else:
     train.train_raw(net,trainloader,testloader)
 '''
+
 
 train.train(net,trainloader,testloader,HP.contrastive)

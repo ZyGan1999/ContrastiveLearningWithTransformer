@@ -119,3 +119,16 @@ def get_target(num, dim):
 
 
 #get_target(num=7,dim=2048)
+
+
+class Target():
+    def __init__(self) -> None:
+        pass
+
+    def generate_target(self,num,dim):
+        self.target = get_target(num,dim)
+        torch.save(self.target,'target.pt')
+
+    def get_target(self):
+        rtn = torch.load('target.pt')
+        return rtn

@@ -13,9 +13,11 @@ class TargetLoss(torch.nn.Module):
         '''
         N = y.size(0)
         y = y.cuda()
+        x = x.cuda()
+        target = target.cuda()
         index = y.view(-1,1)
         index = index.cuda()
-        one_hot = torch.zeros(y.size(0), 5).scatter_(1, index, 1) # (bz, cls) one-hot
+        one_hot = torch.zeros(y.size(0), target.size(0)).cuda().scatter_(1, index, 1) # (bz, cls) one-hot
         one_hot = one_hot.cuda()
 
         similarity_matrix = torch.mm(x, target.T) # (bz, cls)

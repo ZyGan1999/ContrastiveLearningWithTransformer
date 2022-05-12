@@ -267,7 +267,7 @@ def get_model_name():
     return '||'+rtn+'||'
 
 #tag_name = '[G]='+str(HP.G)+'[backbone]='+HP.backbone+'[dataset]='+HP.data_set+' - '+'[batch_size]='+str(HP.batch_size)+' - '+'[dim_k]='+str(HP.dim_k)+' - '+'[dim_v]='+str(HP.dim_v)+' - '+'[n_heads]='+str(HP.n_heads)+' - '+'[lr]='+str(HP.learning_rate) + ' - ' +'[alpha]='+str(HP.alpha)
-tag_name = f'[G:{HP.G}]-[backbone:{HP.backbone}]-[dataset:{HP.data_set}]-[batch_size:{HP.data_set}]-[dim_k:{HP.dim_k}]-[dim_vL{HP.dim_v}]-[n_heads:{HP.n_heads}]-[lr:{HP.learning_rate}]-[alpha:{HP.alpha}]'
+tag_name = f'[TARGET:{HP.TARGET}]-[G:{HP.G}]-[backbone:{HP.backbone}]-[dataset:{HP.data_set}]-[batch_size:{HP.batch_size}]-[dim_k:{HP.dim_k}]-[dim_vL{HP.dim_v}]-[n_heads:{HP.n_heads}]-[lr:{HP.learning_rate}]-[alpha:{HP.alpha}]-[lmd:{HP.lmd}]'
 #tag_name = HP.get_outname()
 
 writer = SummaryWriter(comment = get_model_name()+tag_name)
