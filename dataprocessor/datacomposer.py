@@ -9,6 +9,7 @@ import numpy as np
 from tqdm import tqdm
 import torch
 from torch.utils.data import TensorDataset, DataLoader
+from torchvision.transforms import Resize
 import hyperparameters as HP
 import os
 from torchvision import transforms
@@ -199,6 +200,66 @@ def get_CIFAR100_data_loader():
     print(test_data_tensors.size(), test_label_tensors.size())
 
     return training_data_loader, test_data_loader
+
+
+def get_test_data_loader():
+    training_set = torch.load('./data/test/2_categories_train280_test120/train.pt')
+    print('length of training set: ', len(training_set))
+    Xs = []
+    Ys = []
+    for img, label in training_set:
+        #print(img)
+        #print(label)
+        #x = transforms.functional.to_tensor(img) # PIL to tensor
+        torch_resize = Resize([84,84]) # 定义Resize类对象
+        x = torch_resize(img)
+        #print(x)
+        Xs.append(x)
+        Ys.append(label)
+    training_data_tensors = torch.stack(Xs)
+    training_label_tensors = torch.tensor(Ys)
+    training_data_loader = DataLoader(dataset = TensorDataset(training_data_tensors, training_label_tensors), batch_size = HP.batch_size, shuffle = True, num_workers = 2, drop_last=True)
+
+    test_set = torch.load('./data/test/2_categories_train280_test120/test.pt')
+    print('length of test set: ', len(test_set))
+    Xs = []
+    Ys = []
+    for img, label in test_set:
+        #x = transforms.functional.to_tensor(img) # PIL to tensor
+        torch_resize = Resize([84,84]) # 定义Resize类对象
+        x = torch_resize(img)
+        Xs.append(x)
+        Ys.append(label)
+    test_data_tensors = torch.stack(Xs)
+    test_label_tensors = torch.tensor(Ys)
+    test_data_loader = DataLoader(dataset = TensorDataset(test_data_tensors, test_label_tensors), batch_size = HP.batch_size, shuffle = True, num_workers = 2, drop_last=True)
+
+
+    print(training_data_tensors.size(), training_label_tensors.size())
+    print(test_data_tensors.size(), test_label_tensors.size())
+
+    return training_data_loader, test_data_loader
+
+def get_test_test_sample_tensor():
+    training_set = torch.load('./data/test/2_categories_train280_test120/test.pt')
+    Xs = []
+    Ys = []
+    for img, label in training_set:
+        #x = transforms.functional.to_tensor(img) # PIL to tensor
+        torch_resize = Resize([84,84]) # 定义Resize类对象
+        x = torch_resize(img)
+        Xs.append(x)
+        Ys.append(label)
+    training_data_tensors = torch.stack(Xs)
+    training_label_tensors = torch.tensor(Ys)
+
+    index = torch.LongTensor(random.sample(range(120), HP.sample_num))
+    training_data_tensors = torch.index_select(training_data_tensors, dim=0, index=index)
+    training_label_tensors = torch.index_select(training_label_tensors, dim=0, index=index)
+
+    print('get random tensor for drawing',training_data_tensors.size(),training_label_tensors.size())
+
+    return training_data_tensors, training_label_tensors
 
 def get_FashionMNIST_data_loader():
     training_set = torch.load('./data/FashionMNIST/training.pt')
@@ -602,6 +663,8 @@ def getData(dataset_name):
 
     elif dataset_name == 'CIFAR100-3':
         return get_cifar100_3_data_loader()
+    elif dataset_name == 'test':
+        return get_test_data_loader()
 
     else:
         raise ValueError("No Such Dataset")
@@ -623,6 +686,8 @@ def get_sample_data(dataset_name):
         return get_CIFAR100_7_test_sample_tensor()
     elif dataset_name == 'CIFAR100-3':
         return get_CIFAR100_3_test_sample_tensor()
+    elif dataset_name == 'test':
+        return get_test_test_sample_tensor()
 
     else:
         raise ValueError("No Such Dataset")

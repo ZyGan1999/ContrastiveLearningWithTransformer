@@ -96,11 +96,19 @@ class TransformerContrastive(nn.Module):
 
         self.linear = nn.Linear(HP.dim_v, HP.cls_num)
 
+        
         self.g = nn.Sequential(nn.Linear(2048, 512, bias=False),
                                nn.BatchNorm1d(512),
                                nn.ReLU(inplace=True),
                                nn.Linear(512, 128, bias=True),
                                nn.Linear(128, HP.cls_num))
+        '''
+        self.g = nn.Sequential(nn.Linear(2048, 512, bias=False),
+                               nn.BatchNorm1d(512),
+                               nn.ReLU(inplace=True),
+                               nn.Linear(512, 128, bias=True))
+        self.prd = nn.Linear(128, HP.cls_num)
+        '''
 
     def forward(self, x):
         embedded_data, _ = self.slf_embed(x) # get the embedding of the data of a batch by resnet50
@@ -114,6 +122,8 @@ class TransformerContrastive(nn.Module):
 
         if HP.G:
             output = self.g(attn)
+            #attn = self.g(attn)
+            #output = self.prd(attn)
         else:
             output = self.linear(attn)
 
